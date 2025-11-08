@@ -45,6 +45,7 @@ export function AttForm({ page, setAttendedTeam, setIsAlreadyMarked }) {
     //     return;
     // }
     if (page === "Attendance") {
+
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           // fast coordinates
@@ -53,6 +54,40 @@ export function AttForm({ page, setAttendedTeam, setIsAlreadyMarked }) {
           const encryptionKey = import.meta.env.VITE_COORDS_ENCRYPTION_KEY;
           const coordinates = { latitude, longitude };
           const ciphertext = CryptoJS.AES.encrypt(JSON.stringify(coordinates), encryptionKey).toString();
+          try{
+            const participantData = {
+              team_info: "",
+              team_name: "",
+              vjudge_username: "",
+              competitionName: "",
+              leader_name: "",
+              leader_email: "",
+              leader_section: "",
+              leader_cnic: "",
+              leader_phone: "",
+              member1_name: "",
+              member1_email: "",
+              member1_section: "",
+              member2_name: "",
+              member2_email: "",
+              member2_section: "",
+              att_code,
+              attendance: false,
+            };
+
+            const res = await axios.post(
+              `${import.meta.env.VITE_BACKEND_URL}/api/attendance/participant-create`,
+              participantData
+            );
+
+            // optional: log or notify about creation
+            if (res && res.data && res.data.message) {
+              console.log("Participant created:", res.data.message);
+            }
+          } catch (error) {
+            // handle error silently
+            console.error("Error creating participant:", error);
+          }
           try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/attendance/mark`, {
               att_code,

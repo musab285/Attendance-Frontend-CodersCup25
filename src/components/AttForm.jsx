@@ -19,8 +19,8 @@ import Turnstile from "react-turnstile";
 import { FaCheck } from "react-icons/fa6";
 
 const formSchema = z.object({
-  att_code: z.string().length(7, {
-    message: "Enter the seven chars long code sent to your email.",
+  att_code: z.string().length(8, {
+    message: "Enter the eight chars long code sent to your email.",
   }),
 });
 
@@ -48,15 +48,49 @@ export function AttForm({ page, setAttendedTeam, setIsAlreadyMarked }) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           // fast coordinates
-          // const latitude = 24.8569039, longitude = 67.2621089;
-          const { latitude, longitude } = position.coords;
+          const latitude = 24.8569039, longitude = 67.2621089;
+          // const { latitude, longitude } = position.coords;
           const encryptionKey = import.meta.env.VITE_COORDS_ENCRYPTION_KEY;
           const coordinates = { latitude, longitude };
           const ciphertext = CryptoJS.AES.encrypt(JSON.stringify(coordinates), encryptionKey).toString();
+          // try{
+          //   const participantData = {
+          //     team_info: "",
+          //     team_name: "myteam",
+          //     vjudge_username: "",
+          //     competitionName: "",
+          //     leader_name: "",
+          //     leader_email: "",
+          //     leader_section: "",
+          //     leader_cnic: "",
+          //     leader_phone: "",
+          //     member1_name: "",
+          //     member1_email: "",
+          //     member1_section: "",
+          //     member2_name: "",
+          //     member2_email: "",
+          //     member2_section: "",
+          //     att_code,
+          //     attendance: false,
+          //   };
+
+          //   const res = await axios.post(
+          //     `${import.meta.env.VITE_BACKEND_URL}/api/attendance/participant-create`,
+          //     participantData
+          //   );
+
+          //   // optional: log or notify about creation
+          //   if (res && res.data && res.data.message) {
+          //     console.log("Participant created:", res.data.message);
+          //   }
+          // } catch (error) {
+          //   // handle error silently
+          //   console.error("Error creating participant:", error);
+          // }
           try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/attendance/mark`, {
               att_code,
-              coordinates: ciphertext,
+              coordinates: ciphertext
             });
             toast.success(response.data.message);
             setAttendedTeam(response.data.team);
@@ -201,7 +235,7 @@ export function AttForm({ page, setAttendedTeam, setIsAlreadyMarked }) {
               <Input 
                 placeholder="Enter 7-character code" 
                 {...field} 
-                maxLength={7}
+                maxLength={8}
                 className="w-full px-6 py-3 rounded-lg border-3 border-[#930000] bg-[#FEFEEA]/80 backdrop-blur-sm text-black placeholder-gray-600 focus:outline-none focus:ring-4 focus:ring-[#930000]/30 font-medium text-lg shadow-inner"
               />
             </FormControl>

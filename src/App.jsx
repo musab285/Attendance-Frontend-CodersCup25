@@ -6,7 +6,181 @@ import { FaArrowUpLong, FaArrowTurnUp } from "react-icons/fa6";
 import "./App.css";
 import { AttForm } from "./components/Form";
 import { Toaster } from "@/components/ui/sonner";
+import {import Squares from "./components/Squares";
+import { useState } from "react";
+import { FaLock } from "react-icons/fa";
+import { IoMdInformationCircleOutline } from "react-icons/io";
+import { FaArrowUpLong, FaArrowTurnUp } from "react-icons/fa6";
+import "./App.css";
+import { AttForm } from "./components/Form";
+import { Toaster } from "@/components/ui/sonner";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+function App() {
+  const [currPage, setCurrPage] = useState("Certificate"); // "Attendance" or "Certificate"
+  const [showInfo, setShowInfo] = useState(false);
+  const [attendedTeam, setAttendedTeam] = useState(null);
+  const [isAlreadyMarked, setIsAlreadyMarked] = useState(false);
+
+  return (
+<div className="min-h-screen max-h-full bg-[#fffce5] bg-[url('/bg2025.png')] bg-contain bg-center bg-no-repeat relative py-5 font-poppins p-3 flex flex-col justify-center items-center overflow-x-hidden">
+      {/* <div className="absolute inset-0 bg-[#fefeea]/70"></div> */}
+
+      {/* <Squares borderColor="rgb(66 65 65)" /> */}
+     <div className="relative flex flex-wrap gap-2 mx-auto w-full max-w-md p-1 rounded-lg bg-white/9 backdrop-blur-sm font-semibold tracking-wide text-lg border-4 border-[#7E0000] justify-center">
+  <button
+    onClick={() => {
+      setCurrPage("Attendance");
+      setAttendedTeam(null);
+      setIsAlreadyMarked(false);
+    }}
+    disabled={currPage !== "Attendance"}
+    className={`p-1 px-3 rounded-md flex items-center gap-2 min-w-[120px] justify-center ${
+      currPage === "Attendance"
+        ? "bg-[#7E0000] cursor-pointer text-white"
+        : "cursor-not-allowed text-black"
+    }`}
+  >
+    Attendance
+    {currPage !== "Attendance" && <FaLock className="text-sm" />}
+  </button>
+  <button
+    onClick={() => {
+      setCurrPage("Certificate");
+      setAttendedTeam(null);
+      setIsAlreadyMarked(false);
+    }}
+    disabled={currPage !== "Certificate"}
+    className={`p-1 px-3 rounded-md flex items-center gap-2 min-w-[120px] justify-center ${
+      currPage === "Certificate"
+        ? "bg-[#7E0000] cursor-pointer text-white"
+        : "cursor-not-allowed text-black"
+    }`}
+  >
+    Certificate
+    {currPage !== "Certificate" && <FaLock className="text-sm" />}
+  </button>
+</div>
+
+
+<div className="my-12 w-full max-w-lg flex flex-col gap-6 justify-center items-center mx-auto rounded-xl p-6 sm:p-8 text-black relative bg-devday bg-white/10 backdrop-blur-sm border-4 border-[#7e0000]">
+
+  <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 w-full px-4 sm:px-0">
+    <img
+      src="/logo.png"
+      alt="DevDay'25"
+      className="cursor-pointer w-[60px] sm:w-[70px] max-w-full mx-auto md:mx-0"
+    />
+
+    <div className="flex flex-col gap-4 items-center md:items-start text-center md:text-left flex-1">
+      {attendedTeam ? (
+        <h1 className="font-semibold text-lg sm:text-xl">
+          Attendance of the team <br />
+          <span className="text-2xl sm:text-3xl font-bold ">
+            {attendedTeam.Team_Name.length > 30
+              ? attendedTeam.Team_Name.substring(0, 27) + "..."
+              : attendedTeam.Team_Name}
+          </span>{" "}
+          <br />
+          {isAlreadyMarked ? "is already marked!" : "marked successfully!"}
+        </h1>
+      ) : (
+        <>
+          <h1
+            style={{
+              fontFamily: '"Press Start 2P", cursive',
+              fontWeight: '700',
+              color: '#7E0000',
+              fontSize: '1rem',
+              letterSpacing: '0.3em',
+              textTransform: 'uppercase',
+              userSelect: 'none',
+              margin: 0,
+              padding: 0,
+            }}
+            className="text-base sm:text-lg"
+          >
+            DOWNLOAD CERTIFICATE
+          </h1>
+
+          <AttForm
+            page={currPage}
+            setAttendedTeam={setAttendedTeam}
+            setIsAlreadyMarked={setIsAlreadyMarked}
+          />
+        </>
+      )}
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+      <div
+        onClick={() => setShowInfo(!showInfo)}
+        className="absolute bottom-0 left-10 w-[300px] bg-[#7E0000] backdrop-blur-sm rounded-tl-md rounded-tr-md flex flex-col items-center cursor-help"
+      >
+        <h3 className="text-lg font-medium my-0.5">Instructions</h3>
+        <div
+          className={`z-50 text-xs w-full border-t py-2  px-3 pb-2 ${
+            showInfo ? " block" : "translate-y-0 hidden"
+          } transition-all duration-300 ease-in-out`}
+        >
+          <ul className="flex flex-col">
+            {/* <li className='flex gap-2 items-center'> <FaArrowTurnUp className='rotate-90' /> Enable your device's location.</li> */}
+            <li className="flex gap-2 items-center">
+              {" "}
+              <FaArrowTurnUp className="rotate-90" /> Enter the attendance code
+              emailed to you.
+            </li>
+            <li className="flex gap-2 items-center">
+              {" "}
+              <FaArrowTurnUp className="rotate-90" /> Download the participation
+              certificates for your team members.
+            </li>
+            <li className="mt-2">
+              {" "}
+              <strong>Tip:</strong> If the certificate has expired, refresh the
+              page and re-enter the code.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() =>
+                window.open("https://automation.devday25.com/#team", "_blank")
+              }
+              className="glowing-button flex justify-center items-center group absolute bottom-10 right-6 sm:right-8 w-[50px] aspect-square cursor-pointer rounded-full bg-[#7E0000] p-2 text-white transition-all duration-300 ease-in-out"
+            >
+              <IoMdInformationCircleOutline size={34} className="opacity-90" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-center text-md font-medium">
+              Know about <br /> the Developers
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+
+      <Toaster position={"bottom-center"} />
+    </div>
+  );
+}
+
+export default App;
+
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
